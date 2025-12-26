@@ -68,3 +68,13 @@ Terminal
 
 2️⃣ Install the correct tools
 `npm install -D ts-node nodemon`
+
+## for .env
+
+`npm i dotenv`
+
+## config folder file deleted and new method using for database
+
+# use cmd ` npm i sequelize-typescript`
+
+## i used chatgpt connection.ts
