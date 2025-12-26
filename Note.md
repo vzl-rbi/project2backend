@@ -1,80 +1,47 @@
-project start
+## package instellation
 
-## npm init-y
+`npm init -y`
+`npm install express dotenv `
+`npm install -D typescript ts-node`
+// same as "npm i --save-dev typescript"
+##-- npm i ts-node
+It ts-node transforms TypeScript into JavaScript
 
-## installed express nodemon
+`npm install -D @types/express`
+`npm install -D nodemon`
 
-# package.json "type" : "module"
+`npx tsc --init`
+`npm install -D ts-node typescript nodemon @types/node`
 
-- "start":"nodomon app.ts"
+## Deleted current tsconfig file and update like this
 
-## npm installed --save-dev typescript
+{
+"compilerOptions": {
+"target": "ES2020",
+"module": "NodeNext",
+"moduleResolution": "NodeNext",
 
-## npm install @types/express --save-dev
+    "rootDir": ".",
+    "outDir": "dist",
 
-## npm i @types/node --save-dev
+    "types": ["node"],
+    "esModuleInterop": true,
 
-## npx tsc --init
-
-after coding app.ts
-Terminal
--npx tsc
--node build/app.js
-
-## "scripts": {
-
-    "start": "npx tsc && node build/app.js"
+    "strict": true,
+    "skipLibCheck": true
 
 }
+}
 
-## npm start //work perfectly
+## Supabase.com -> id and project created
 
-## install sequelize mysql2
+`npm i sequelize-typescript mysql2` for postgress || mysql2
 
-# npm i --save-dev @types/sequelize
+## Day 2
 
-## to work nodemon
+# i added this below in tsccongig.json to remove @Table @Column Decorator issur or error
 
-- npm i tsc-node
-  -> made nodeomon.json ->
-  {
-  "watch":["src"],
-  "ext": ".ts, .js",
-  "ignore": [],
-  "exec": "npx tsc-node ./src/app.ts"
-  }
+"experimentalDecorators": true,
+"emitDecoratorMetadata": true
 
---> package.json //changed
-"scripts": {
-"test": "echo \"Error: no test specified\" && exit 1",
-"start": "npx nodemon"
-},
-
-## rimraf package install to remove unnecessary file
-
-`npm i rimraf --save-dev`
-
-## again changed package.json
-
-"scripts": {
-"test": "echo \"Error: no test specified\" && exit 1",
-"start": "npx nodemon",
-"build": "rimraf ./build && tsc"
-},
-
-## run command `npm run build`
-
-# npm uninstall tsc-node
-
-2️⃣ Install the correct tools
-`npm install -D ts-node nodemon`
-
-## for .env
-
-`npm i dotenv`
-
-## config folder file deleted and new method using for database
-
-# use cmd ` npm i sequelize-typescript`
-
-## i used chatgpt connection.ts
+## migration or Table created in phpmyadmin successfully
