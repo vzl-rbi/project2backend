@@ -1,4 +1,4 @@
-import {Table, Column, Model, DataType, AllowNull} from "sequelize-typescript"
+import {Table, Column, Model, DataType, AllowNull, PrimaryKey} from "sequelize-typescript"
 @Table({
   tableName: "users",//(phpmyadmin) ui ma dekhine name
   modelName: "User", // access garine name users table lai
@@ -7,6 +7,12 @@ import {Table, Column, Model, DataType, AllowNull} from "sequelize-typescript"
 })
 
 class User extends Model {
+  @Column({
+    primaryKey: true,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4
+  })
+  declare id: string
   @Column({
     type: DataType.STRING
   })

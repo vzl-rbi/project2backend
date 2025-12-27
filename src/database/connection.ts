@@ -23,7 +23,7 @@ try {
   
 }
 //migration garna lai mysql ko lagi
-sequelize.sync({force : true}).then(() => {
+sequelize.sync({force : false}).then(() => {
   console.log("Migration Successfully Achieved!!")
 }).catch((err) => {
   console.log("Migration fail", err)
