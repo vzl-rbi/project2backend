@@ -4,7 +4,7 @@ import app from "./src/app.js";
 import "./src/database/connection.js"
 
 function startServer() {
-  const PORT = envConfig.port || 8000
+  const PORT = 4000
   app.listen(PORT, () => {console.log(`Server started at PORT http://localhost:${PORT}`)})
 
 }
