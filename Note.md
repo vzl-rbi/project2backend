@@ -289,3 +289,33 @@ const errorHandler = (fn:Function) => {
 }
 export default errorHandler
 ```
+
+## adminSeeder Importanat
+
+Because **some data must exist before my app is usable**. That’s the entire reason.
+
+## Why `adminSeeder.ts` is REQUIRED
+
+Your backend usually needs:
+
+- At least **one admin user**
+- Correct role/permissions
+- Known credentials for first login
+
+Without a seeder:
+
+- Admin has to be created manually ❌
+- Prod setup becomes inconsistent ❌
+- Deployments break ❌
+- You risk having **no admin access at all** ❌
+
+An `adminSeeder.ts`:
+
+- Creates the **first admin**
+- Ensures it exists exactly once
+- Can safely run on every deploy
+- Is repeatable and predictable
+
+This is **basic backend hygiene**, not optional.
+
+Put it under **`src/seeders`** (or `src/database/seeders`)

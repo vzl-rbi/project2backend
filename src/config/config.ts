@@ -21,3 +21,7 @@ export const envJwt = {
     expiresIn: Number(required("JWT_EXPIRES_IN")),
     cookieName: required("JWT_COOKIE_NAME"),
 }
+export const envAdmin = {
+  email: required("ADMIN_EMAIL"),
+  password: required("ADMIN_PASSWORD")
+}

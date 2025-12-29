@@ -12,20 +12,16 @@ host: envConfig.host,
   models: [User],
   logging: false //logging is not required. It’s a debug convenience switch.It only reduces console spam.
 })
-try {
-  sequelize.authenticate().then(()=> {
-    console.log("Matched Authentication!!")
-  }).catch((err)=>{
-    console.log("Authentication not matched!!", err)
-  })
-} catch (error) {
-  console.log(error)
-  
-}
-//migration garna lai mysql ko lagi
-sequelize.sync({force : false}).then(() => {
-  console.log("Migration Successfully Achieved!!")
-}).catch((err) => {
-  console.log("Migration fail", err)
-})
+export const initDB = async () => {
+  try {
+    await sequelize.authenticate();
+    console.log("Database authentication successful");
+
+    await sequelize.sync({ force: false });
+    console.log("Database synced successfully");
+  } catch (err) {
+    console.error("Database initialization failed:", err);
+    process.exit(1); // exit app if DB fails
+  }
+};
 export default sequelize
