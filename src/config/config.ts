@@ -16,3 +16,8 @@ export const envConfig = {
   host: required("DB_HOST"),
   port: Number(required("DB_PORT")),
 };
+export const envJwt = {
+  secret: required("JWT_SECRET"),
+    expiresIn: Number(required("JWT_EXPIRES_IN")),
+    cookieName: required("JWT_COOKIE_NAME"),
+}
