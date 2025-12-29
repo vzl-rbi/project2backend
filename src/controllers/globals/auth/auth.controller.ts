@@ -3,9 +3,9 @@ import User from "../../../database/models/user.model.js"
 import bcrypt from "bcrypt"
 import  jwt from "jsonwebtoken"
 import { envJwt } from "../../../config/config.js"
-import { env } from "node:process"
+
 export const registerUser = async (req:Request, res:Response) => {
-  const { username, email, password} = req.body
+   const { username, email, password, role} = req.body
   if(!username || !email || !password) {
   return res.status(400).json({message: "Please Provide required Username, Email, and Password"})
     }
@@ -13,12 +13,13 @@ export const registerUser = async (req:Request, res:Response) => {
 await User.create( {
   username: username,
   email: email,
-  password: hashPassword
+  password: hashPassword,
+  role: role
 })
 res.status(200).json({message: "Registerd Sucessfully!!"})
 }
 export const loginUser = async(req:Request, res: Response) => {
-  const { email, password} = req.body
+   const { email, password} = req.body
   if(!email || !password) {
     return res.status(400).json({message: "Please Provide Email and password!!"})
   }
@@ -36,7 +37,7 @@ export const loginUser = async(req:Request, res: Response) => {
     expiresIn: envJwt.expiresIn
   })
   res.cookie(envJwt.cookieName, token)
-  return res.status(200).json({message: "Logged In Successful!!", Token: token})
-  
+  return res.status(200).json({message: "Logged In Successful!!", Token: token}) 
+ 
   
 }

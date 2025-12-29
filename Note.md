@@ -217,6 +217,8 @@ if(check){
 
 ## jsonwebtoken
 
+# Token =-> identifier, who are you in the system, using token we can find his history,
+
 `npm install jsonwebtoken`
 `npm i -D @types/jsonwebtoken`
 ✅ Fix it (DO THIS)
@@ -272,4 +274,18 @@ res.cookie("auth", token, {
   secure: false, // false for localhost
   maxAge: 24 * 60 * 60 * 1000,
 });
+```
+
+## instead of trycatch, utilze -->
+
+```
+import { Request, Response, NextFunction } from "express";
+const errorHandler = (fn:Function) => {
+  return (req:Request, res:Response, next:NextFunction) => {
+    fn(req, res, next).catch((err:Error)=> {
+      return res.status(500).json({message: "Internal Error", errorMessage: err.message})
+    })
+  }
+}
+export default errorHandler
 ```
