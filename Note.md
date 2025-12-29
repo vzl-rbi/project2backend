@@ -169,3 +169,107 @@ const app = express()
 
 }
 app.use("/api", authRouter)
+
+## password hash
+
+bcrypt (DT) which measn we need typescript. so
+`npm i bcrypt`
+`npm install -D @types/bcrypt`
+
+# validation
+
+--> database validation
+@Column({
+unique: true
+})
+declare username: string
+` username should be unique`
+
+## Fat model.....Thin contrller
+
+`if validation done in Controller .i.e Application validation`
+for this concept " Fat model, Thin contrller ". make sure validation should be done in database.i.e model
+
+# for this concept `fat model, thin controller`
+
+--> for registerUser -> for email-> To Check if email already exists-->
+
+```
+ @Column({
+    type: DataType.STRING,
+    unique: true
+  })
+  declare email: string
+```
+
+# Althernative fo controller .i.e registerUser
+
+# Check if email already exists
+
+```
+const check = await User.findOne({
+    email
+})
+if(check){
+    return res.statuc(409).json({message: "Email already exists"})
+}
+```
+
+## jsonwebtoken
+
+`npm install jsonwebtoken`
+`npm i -D @types/jsonwebtoken`
+✅ Fix it (DO THIS)
+` import jwt from "jsonwebtoken";`
+
+## after finnaly solving all issues
+
+token generated from postman
+{
+"message": "Login Successful!!",
+"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImY1NTlkODRjLWE2YTctNGM2Ny04MWZjLWZhNjYyYTVhNGNhYyIsImlhdCI6MTc2NjkxNzM1MywiZXhwIjoxNzY3MDAzNzUzfQ.3j7y-K2aIHVm-wp35QWfhvE7FVGFQp8ylNiUpVqz6FU"
+}
+const token = jwt.sign({id: user.id}, envJwt.secret, {
+expiresIn: envJwt.expiresIn
+})
+
+## `{id : user.id} `--> yo maile lukauna khojeko kura ho example user ko unique id ani tesko lagi arko secret code ho `envJwt.secret`, ani expire date `expiresIn: envJwt.expiresIn`
+
+## res.cookie(envJwt.cookieName, token, {
+
+      httpOnly: true,
+      sameSite: "strict",
+    });
+
+httpOnly: true - this flag means the cookie is not accessible via JavaScript (client-side scripts), which helps prevent XSS attacks.
+sameSite: "strict" - this attribute controls whether the cookie is sent with cross-site requests.
+"strict" means the cookie is only sent in a first-party context, i.e., when the site of the cookie matches the site in the browser's URL.
+
+# i removed this httpOnly: true,
+
+      sameSite: "strict",
+
+## httpOnly: false, // to allow client-side access
+
+## important
+
+## **Security vs Convenience Trade-off:**
+
+| **Setting**          | **Security Level**         | **Frontend Access**      |
+| -------------------- | -------------------------- | ------------------------ |
+| `httpOnly: true`     | High (prevents XSS)        | No direct JS access      |
+| `httpOnly: false`    | Low (exposed to XSS)       | Full JS access           |
+| `sameSite: "strict"` | High (prevents CSRF)       | Same domain only         |
+| `sameSite: "lax"`    | Medium                     | Cross-origin GET allowed |
+| `sameSite: "none"`   | Low (needs `secure: true`) | All cross-origin         |
+
+## **Recommended for Development:**
+
+```javascript
+res.cookie("auth", token, {
+  httpOnly: true, // KEEP THIS for security
+  sameSite: "lax", // More permissive than "strict"
+  secure: false, // false for localhost
+  maxAge: 24 * 60 * 60 * 1000,
+});
+```
