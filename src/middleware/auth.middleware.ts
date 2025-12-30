@@ -38,7 +38,7 @@ export const authMiddleware = async (req: AuthRequest, res:Response, next:NextFu
   })
 
 }
-enum Role {
+export enum Role {
   Admin = "admin",
   Customer = "customer",
 }

@@ -328,3 +328,19 @@ request--> middleware to check authenticated or not(eg. login or not) -->middlew
 //jwt verify
 jwt.verify(token as string, envJwt.secret, (err, result))
 `(err, result)`--> yo callback function ho token verify bhayo ki bhayena k bhayo inform garxa.
+
+## Middleware Rule (remember these)
+
+If you internalize just these, your code quality jumps immediately:
+
+1. **Middleware should not do business logic**
+2. **Avoid callbacks when async/await is available**
+3. **Never trust raw headers**
+4. **Never attach sensitive data (password) to `req.user`**
+5. **Return early, fail fast**
+6. **Types should describe what you expose, not what exists in DB**
+
+## for add prdoduct image
+
+`npm install multer`
+`npm install -D @tyeps/multer`
