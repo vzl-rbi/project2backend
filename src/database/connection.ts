@@ -16,7 +16,7 @@ export const initDB = async () => {
   try {
     await sequelize.authenticate();
     console.log("Database authentication successful");
-
+// migration garna ko lagi "mysql2"
     await sequelize.sync({ force: false });
     console.log("Database synced successfully");
   } catch (err) {

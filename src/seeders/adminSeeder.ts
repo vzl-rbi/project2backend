@@ -1,7 +1,7 @@
 import { envAdmin } from "../config/config.js"
 import User from "../database/models/user.model.js"
 import bcrypt from "bcrypt"
-
+//A seeder should NEVER use Request / Response
 const adminSeeder = async():Promise<void> => {
   if (!envAdmin.email || !envAdmin.password) {
       throw new Error("Admin email or password missing in envAdmin config");
@@ -14,7 +14,7 @@ const adminSeeder = async():Promise<void> => {
   if(!data) {
     await User.create({
       email: envAdmin.email,
-      password: await bcrypt.hash(envAdmin.password, 8),
+      password: await bcrypt.hash(envAdmin.password, 10),
       username: "seniorAdmin",
       role: "Admin"
     })

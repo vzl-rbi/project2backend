@@ -319,3 +319,12 @@ An `adminSeeder.ts`:
 This is **basic backend hygiene**, not optional.
 
 Put it under **`src/seeders`** (or `src/database/seeders`)
+
+## Add product (process)
+
+request--> middleware to check authenticated or not(eg. login or not) -->middleware to check the role of user hitting api("Admin" or"customer", "staff") --> finally --> add product
+`next()` yo xa bhane tyo middleware ho
+
+//jwt verify
+jwt.verify(token as string, envJwt.secret, (err, result))
+`(err, result)`--> yo callback function ho token verify bhayo ki bhayena k bhayo inform garxa.

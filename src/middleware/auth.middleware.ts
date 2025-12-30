@@ -1,0 +1,44 @@
+import { Request, Response, NextFunction } from "express"
+import jwt from "jsonwebtoken"
+import { envJwt } from "../config/config.js"
+import User from "../database/models/user.model.js"
+
+interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    username: string;
+    password: string;
+    email: string;
+    role: string;
+  }
+}
+const authMiddleware = async (req: AuthRequest, res:Response, next:NextFunction):Promise<void> => {
+  //get token from user
+  const token = req.headers.authorization   //authorization ko je name rakhda ni hunxa
+  if(!token || token === undefined || token === null ) {
+    res.status(403).json({message: "Token not found, Unauthorized User "})
+    return
+  }
+  //verify token if it is legit or tampered
+  jwt.verify(token as string, envJwt.secret, async (err, decoded:any) => {
+    if(err) {
+      res.status(403).json({message: "Invalid Token"})
+    } else{
+      try {
+        //check if that decoded id, user exist or not
+      const userData = await User.findByPk(decoded.id)
+      if(!userData) {
+        res.status(404).json({message: "No user with that token"})
+        return
+      }
+      req.user = userData
+      next()
+      } catch (error) {
+        res.status(500).json({message: "Something went wrong", error: error})
+        
+      }
+ 
+    }
+  })
+
+}
