@@ -1,6 +1,7 @@
 import { Sequelize} from "sequelize-typescript"
 import { envConfig } from "../config/config.js"
 import User from "./models/user.model.js"
+import Product from "./models/product.model.js";
 
 const sequelize = new Sequelize({
 dialect:"mysql",
@@ -9,7 +10,7 @@ host: envConfig.host,
   database: envConfig.database,
   username: envConfig.username,
   password: envConfig.password,
-  models: [User],
+  models: [User, Product],
   logging: false //logging is not required. It’s a debug convenience switch.It only reduces console spam.
 })
 export const initDB = async () => {

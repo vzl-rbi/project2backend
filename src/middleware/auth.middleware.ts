@@ -6,13 +6,11 @@ import User from "../database/models/user.model.js"
 interface AuthRequest extends Request {
   user?: {
     id: string;
-    username: string;
-    password: string;
     email: string;
     role: string;
   }
 }
-const authMiddleware = async (req: AuthRequest, res:Response, next:NextFunction):Promise<void> => {
+export const authMiddleware = async (req: AuthRequest, res:Response, next:NextFunction):Promise<void> => {
   //get token from user
   const token = req.headers.authorization   //authorization ko je name rakhda ni hunxa
   if(!token || token === undefined || token === null ) {
@@ -28,17 +26,35 @@ const authMiddleware = async (req: AuthRequest, res:Response, next:NextFunction)
         //check if that decoded id, user exist or not
       const userData = await User.findByPk(decoded.id)
       if(!userData) {
-        res.status(404).json({message: "No user with that token"})
+        res.status(401).json({message: "No user with that token"})
         return
       }
       req.user = userData
       next()
       } catch (error) {
-        res.status(500).json({message: "Something went wrong", error: error})
-        
-      }
- 
+        res.status(401).json({message: "Invalid or Expire token"})        
+      } 
     }
   })
 
 }
+enum Role {
+  Admin = "admin",
+  Customer = "customer",
+}
+
+export const restrictTo = (...roles: Role[]) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
+    if (!req.user) {
+      res.status(401).json({ message: "Not authenticated" });
+      return;
+    }
+    const userRole = req.user.role as Role
+
+    if (!roles.includes(userRole)) {
+      res.status(403).json({message: "Access denied"});
+      return;
+    }
+    next();
+  };
+};

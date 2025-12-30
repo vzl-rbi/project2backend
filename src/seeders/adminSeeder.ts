@@ -16,7 +16,7 @@ const adminSeeder = async():Promise<void> => {
       email: envAdmin.email,
       password: await bcrypt.hash(envAdmin.password, 10),
       username: "seniorAdmin",
-      role: "Admin"
+      role: "admin"
     })
     console.log("Admin Credintials Seeded Succesfuully!!")
   } else {

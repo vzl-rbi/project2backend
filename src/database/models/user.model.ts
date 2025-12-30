@@ -28,8 +28,8 @@ class User extends Model {
   })
   declare email: string
   @Column({
-    type: DataType.ENUM("Customer","Admin"),
-    defaultValue: "Customer",
+    type: DataType.ENUM("customer","admin"),
+    defaultValue: "customer",
     allowNull: false
   })
   declare role: string
