@@ -344,3 +344,15 @@ If you internalize just these, your code quality jumps immediately:
 
 `npm install multer`
 `npm install -D @tyeps/multer`
+
+## important Note
+
+Bottom line (remember this)
+
+async → always returns a Promise
+
+Promise<void> → “I return nothing useful”
+
+Express controllers → should use Promise<void>
+
+You don’t need it, but professionals use it to avoid stupid mistakes.

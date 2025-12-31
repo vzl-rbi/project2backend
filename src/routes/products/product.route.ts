@@ -4,5 +4,8 @@ import { authMiddleware, restrictTo, Role } from "../../middleware/auth.middlewa
 import { storage, multer } from "../../middleware/multer.middlware.js"
 const upload = multer({storage:storage})
 const productRouter = express.Router()
-productRouter.route("/addproduct").post(authMiddleware, restrictTo(Role.Admin),upload.single("image"), addProduct)
+productRouter.route("/product").post(authMiddleware, restrictTo(Role.Admin),upload.single("image"), addProduct)
+
+
+
 export default productRouter

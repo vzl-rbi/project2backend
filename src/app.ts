@@ -6,7 +6,7 @@ import productRouter from "./routes/products/product.route.js";
 const app = express()
 app.use(express.json())
 app.use("/api", authRouter)
-app.use("/api", productRouter)
+app.use("/admin", productRouter)
 //adminSeeder
 const startApp = async () => {
   await initDB();        // Ensure DB is ready

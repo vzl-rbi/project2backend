@@ -4,20 +4,44 @@ import bcrypt from "bcrypt"
 import  jwt from "jsonwebtoken"
 import { envJwt } from "../../../config/config.js"
 
-export const registerUser = async (req:Request, res:Response) => {
-   const { username, email, password, role} = req.body
-  if(!username || !email || !password) {
-  return res.status(400).json({message: "Please Provide required Username, Email, and Password"})
+export const registerUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const { username, email, password } = req.body
+
+    if (!username || !email || !password) {
+      res.status(400).json({ message: "Username, email, and password are required" })
+      return
     }
-    const hashPassword = await bcrypt.hash(password, 10)
-await User.create( {
-  username: username,
-  email: email,
-  password: hashPassword,
-  role: role
-})
-res.status(200).json({message: "Registerd Sucessfully!!"})
+
+    if (password.length < 6) {
+      res.status(400).json({ message: "Password must be at least 6 characters long" })
+      return
+    }
+
+    const existingUser = await User.findOne({
+      where: { email }
+    })
+
+    if (existingUser) {
+      res.status(409).json({ message: "Email already exists" })
+      return
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+
+    await User.create({
+      username,
+      email,
+      password: hashedPassword,
+    })
+
+    res.status(201).json({ message: "Registered successfully" })
+  } catch (error) {
+    console.error(error)
+    res.status(500).json({ message: "Internal server error" })
+  }
 }
+
 export const loginUser = async(req:Request, res: Response) => {
    const { email, password} = req.body
   if(!email || !password) {

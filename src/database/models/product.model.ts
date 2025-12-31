@@ -23,16 +23,19 @@ class Product extends Model {
   })
   declare productDescription: string
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.DECIMAL(10, 2),
+    allowNull : false
   })
   declare productPrice: number
   @Column({
-    type: DataType.INTEGER
+    type: DataType.INTEGER,
+    allowNull : false,
+    validate: { min: 0}
   })
   declare productTotalStockQty : number
   @Column({
     type: DataType.STRING
   })
-  declare productImage : string
+  declare image : string
 }
 export default Product

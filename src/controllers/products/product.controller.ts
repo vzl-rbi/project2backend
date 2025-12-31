@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import Product from "../../database/models/product.model.js";
 
-const addProduct = async (req: Request, res: Response):Promise<Response> => {
+const addProduct = async (req: Request, res: Response): Promise<void> => {
   try {
     const {
       productName,
@@ -9,39 +9,50 @@ const addProduct = async (req: Request, res: Response):Promise<Response> => {
       productPrice,
       productTotalStockQty,
     } = req.body;
-  let fileName
-  if(req.file) {
-    fileName = "http://localhost:4000/" + req.file.filename  //hamile pathako image true bhaye
-  } else { //image xaina bhane default image yo add hunxa
-    fileName = "https://d2v5dzhdg4zhx3.cloudfront.net/web-assets/images/storypages/primary/ProductShowcasesampleimages/JPEG/Product+Showcase-1.jpg"
-  }
 
+    // Validate required fields properly
     if (
       !productName ||
       !productDescription ||
-      productPrice == null ||
-      productTotalStockQty == null
+      productPrice === undefined ||
+      productTotalStockQty === undefined
     ) {
-      return res.status(400).json({
+      res.status(400).json({
         message: "All product fields are required",
       });
+      return;
     }
+
+    // Parse numeric values
+    const price = Number(productPrice);
+    const stockQty = Number(productTotalStockQty);
+
+    if (isNaN(price) || isNaN(stockQty)) {
+      res.status(400).json({
+        message: "Price and stock quantity must be numbers",
+      });
+      return;
+    }
+
+    const image = req.file
+      ? `http://localhost:4000/${req.file.filename}`
+      : "https://d2v5dzhdg4zhx3.cloudfront.net/web-assets/images/storypages/primary/ProductShowcasesampleimages/JPEG/Product+Showcase-1.jpg";
 
     const product = await Product.create({
       productName,
       productDescription,
-      productPrice,
-      productTotalStockQty,
-      productImage: fileName
+      productPrice: price,
+      productTotalStockQty: stockQty,
+      image,
     });
 
-    return res.status(201).json({
+    res.status(201).json({
       message: "Product added successfully",
       data: product,
     });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({
+    res.status(500).json({
       message: "Failed to add product",
     });
   }

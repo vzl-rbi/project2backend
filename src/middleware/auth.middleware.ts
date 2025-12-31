@@ -50,6 +50,7 @@ export const restrictTo = (...roles: Role[]) => {
       return;
     }
     const userRole = req.user.role as Role
+    console.log("My Role: ", userRole)
 
     if (!roles.includes(userRole)) {
       res.status(403).json({message: "Access denied"});
