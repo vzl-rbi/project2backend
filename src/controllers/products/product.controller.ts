@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import Product from "../../database/models/product.model.js";
+import { AuthRequest } from "../../middleware/auth.middleware.js";
 
-const addProduct = async (req: Request, res: Response): Promise<void> => {
+const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
   try {
+    const userId = req.user?.id
     const {
       productName,
       productDescription,
@@ -44,6 +46,7 @@ const addProduct = async (req: Request, res: Response): Promise<void> => {
       productPrice: price,
       productTotalStockQty: stockQty,
       image,
+      userId
     });
 
     res.status(201).json({

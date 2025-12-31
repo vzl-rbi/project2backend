@@ -15,6 +15,21 @@ host: envConfig.host,
 })
 export const initDB = async () => {
   try {
+      //Realtionship First then Aunthenicate 
+      //All associations MUST be defined BEFORE sequelize.sync()     
+  // User.hasMany(Product)
+  // Product.belongsTo(User)
+  //yati matra garda ni bhayo ani  UserId Column banai dinxa Product Table tira but alternative afnai column name din amna lage
+
+  User.hasMany(Product, {
+    foreignKey: "userId",
+    onDelete: "CASCADE"// delete products if user deleted
+  })
+  Product.belongsTo(User, {
+    foreignKey: "userId"
+  })
+
+  //Aunthenticate
     await sequelize.authenticate();
     console.log("Database authentication successful");
 // migration garna ko lagi "mysql2"
@@ -24,5 +39,6 @@ export const initDB = async () => {
     console.error("Database initialization failed:", err);
     process.exit(1); // exit app if DB fails
   }
+
 };
 export default sequelize

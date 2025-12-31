@@ -3,7 +3,7 @@ import jwt from "jsonwebtoken"
 import { envJwt } from "../config/config.js"
 import User from "../database/models/user.model.js"
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: {
     id: string;
     email: string;

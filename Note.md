@@ -356,3 +356,39 @@ Promise<void> → “I return nothing useful”
 Express controllers → should use Promise<void>
 
 You don’t need it, but professionals use it to avoid stupid mistakes.
+
+## Relationship of table
+
+`User and Product`
+User.hasMany(Prduct)
+Product.belongsTo(User)
+
+## Importanat
+
+    // 1️⃣ Define relationships FIRST
+    User.hasMany(Product, {
+      foreignKey: "userId",
+      onDelete: "CASCADE",
+    });
+
+    Product.belongsTo(User, {
+      foreignKey: "userId",
+    });
+
+    // 2️⃣ Then authenticate
+    await sequelize.authenticate();
+    console.log("Database authentication successful");
+
+    // 3️⃣ Then sync
+    await sequelize.sync({ alter: true }); // dev-only
+    console.log("Database synced successfully");
+
+# Final reality check
+
+Sequelize is not magic
+
+Order matters
+
+Models + relationships + sync must be aligned
+
+## product and user relationship made and productController updated for relaship worka and userID seen
