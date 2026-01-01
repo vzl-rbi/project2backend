@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Product from "../../database/models/product.model.js";
 import { AuthRequest } from "../../middleware/auth.middleware.js";
+import Category from "../../database/models/category.model.js";
 
 const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
   try {
@@ -10,6 +11,7 @@ const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
       productDescription,
       productPrice,
       productTotalStockQty,
+      categoryId,
     } = req.body;
 
     // Validate required fields properly
@@ -17,7 +19,8 @@ const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
       !productName ||
       !productDescription ||
       productPrice === undefined ||
-      productTotalStockQty === undefined
+      productTotalStockQty === undefined ||
+      !categoryId
     ) {
       res.status(400).json({
         message: "All product fields are required",
@@ -35,7 +38,12 @@ const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
       });
       return;
     }
-
+       // 5️⃣ Validate category existence
+    const category = await Category.findByPk(categoryId);
+    if (!category) {
+      res.status(400).json({ message: "Invalid categoryId" });
+      return;
+    }
     const image = req.file
       ? `http://localhost:4000/${req.file.filename}`
       : "https://d2v5dzhdg4zhx3.cloudfront.net/web-assets/images/storypages/primary/ProductShowcasesampleimages/JPEG/Product+Showcase-1.jpg";
@@ -46,7 +54,8 @@ const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
       productPrice: price,
       productTotalStockQty: stockQty,
       image,
-      userId
+      userId,
+      categoryId
     });
 
     res.status(201).json({

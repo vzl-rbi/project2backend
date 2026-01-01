@@ -29,6 +29,24 @@ export const initDB = async () => {
   Product.belongsTo(User, {
     foreignKey: "userId"
   })
+ Category.hasMany(Product, {
+  foreignKey: "categoryId",
+  onDelete: "SET NULL", // or CASCADE, depending on your logic
+});
+
+Product.belongsTo(Category, {
+  foreignKey: "categoryId",
+});
+//Or one to one relationship
+/*
+Product.belongsTo(Category, {
+foreignKye: "categoryId"
+})
+Category.hasOne(Product,{
+foreignKey: "categoryId"
+})
+*/
+
 
   //Aunthenticate
     await sequelize.authenticate();
