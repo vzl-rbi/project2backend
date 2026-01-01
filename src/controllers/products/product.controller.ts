@@ -2,8 +2,9 @@ import { Request, Response } from "express";
 import Product from "../../database/models/product.model.js";
 import { AuthRequest } from "../../middleware/auth.middleware.js";
 import Category from "../../database/models/category.model.js";
+import User from "../../database/models/user.model.js";
 
-const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
+export const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
   try {
     const userId = req.user?.id
     const {
@@ -70,4 +71,16 @@ const addProduct = async (req:AuthRequest, res: Response): Promise<void> => {
   }
 };
 
-export default addProduct;
+export const getAllProduct = async(req:AuthRequest, res:Response) => {
+const data = await Product.findAll({
+  include : [
+    {
+      model: User
+    },
+    {
+      model: Category
+    }
+  ]
+})
+res.status(200).json({message : "product Fetched Successfully!!", data})
+}
