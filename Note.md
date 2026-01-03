@@ -392,3 +392,25 @@ Order matters
 Models + relationships + sync must be aligned
 
 ## product and user relationship made and productController updated for relaship worka and userID seen
+
+## How bulkCreate() Works in Sequelize
+
+bulkCreate() is a Sequelize method that inserts multiple records into a database table in a single SQL query, which is much more efficient than inserting records one by one.
+
+## const User = sequelize.define('User', {
+
+username: DataTypes.STRING,
+email: DataTypes.STRING,
+status: DataTypes.STRING
+});
+
+// Multiple records to insert
+const userData = [
+{ username: 'john_doe', email: 'john@example.com', status: 'active' },
+{ username: 'jane_smith', email: 'jane@example.com', status: 'active' },
+{ username: 'bob_wilson', email: 'bob@example.com', status: 'pending' }
+];
+
+// Insert all records at once
+const users = await User.bulkCreate(userData);
+console.log(`Created ${users.length} users`);

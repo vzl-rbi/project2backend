@@ -75,12 +75,45 @@ export const getAllProduct = async(req:AuthRequest, res:Response) => {
 const data = await Product.findAll({
   include : [
     {
-      model: User
+      model: User, //all data show gardinxa
+      attributes: ["id", "email", "userName"] // yesle aba restrict or aba email matra show garxa
     },
     {
-      model: Category
+      model: Category, 
+      attributes: ["id",'categoryName']
     }
   ]
 })
 res.status(200).json({message : "product Fetched Successfully!!", data})
+}
+export const getSingleProduct = async(req:Request, res:Response):Promise<void> => {
+const id = req.params.id
+const data = await Product.findOne({
+  where: {
+    id: id
+  }
+})
+if(!data) {
+  res.status(404).json({ message: "Product not found" });
+  return;
+}
+res.status(200).json({ message: "Product fetched successfully", data });
+}
+export const deleteProduct = async(req:Request, res:Response):Promise<void> => {
+  const {id} = req.params
+  if (!id) {
+      res.status(400).json({ message: "Product id is required" });
+      return;
+    }
+ const deletedCount = await Product.destroy({
+    where: {
+      id: id
+    }
+  })
+ if (deletedCount === 0) {
+      res.status(404).json({ message: "Product not found" });
+      return;
+    }
+  res.status(200).json({message: "Product Deleted Succesfully!!"})
+  
 }
