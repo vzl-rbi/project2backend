@@ -91,7 +91,18 @@ const id = req.params.id
 const data = await Product.findOne({
   where: {
     id: id
+  },
+  include: [
+    {
+    model: User,
+    attributes: ["id", "userName", "email"]
+  },
+  {
+    model: Category,
+    attributes: ["id", "categoryName"]
   }
+  ]
+
 })
 if(!data) {
   res.status(404).json({ message: "Product not found" });
@@ -116,4 +127,47 @@ export const deleteProduct = async(req:Request, res:Response):Promise<void> => {
     }
   res.status(200).json({message: "Product Deleted Succesfully!!"})
   
+}
+export const  updateProduct = async(req: Request, res:Response):Promise<void> => {
+  const {id} = req.params
+  if(!id) {
+    res.status(400).json({message: "Product id is Required!!"})
+    return
+  }
+ const {
+      productName,
+      productDescription,
+      productPrice,
+      productTotalStockQty,
+      categoryId,
+    } = req.body;
+// Check product exists
+const product = await Product.findByPk(id) 
+if(!product) {
+  res.status(404).json({message: "Product not found!!"})
+  return
+}
+// Validate category if provided
+if(categoryId) {
+  const category = await Category.findByPk(categoryId)
+  if(!category) {
+    res.status(404).json({message: "Invalid Category"})
+    return
+  }
+}
+
+    // Update only provided fields
+    /*
+    // Model.update(values, { where }) → bulk update
+   //instance.update(values) → single record (what you want 90% of the time) 
+   //product.update  -> yo Product hoina yo const product = await Product.findByPk(id)--> yeslai update garni ho
+*/
+const updatedItem = await product.update({
+        productName,
+      productDescription,
+      productPrice,
+      productTotalStockQty,
+      categoryId: categoryId
+    })
+    res.status(200).json({message: "Product Updated", updatedItem })
 }
