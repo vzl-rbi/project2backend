@@ -33,27 +33,20 @@ export const addCategory = async(req:Request, res:Response):Promise<void> => {
   const category = await Category.create({
     categoryName
   })
-  if(!category) {
-    res.status(404).json({message: "Category Name not Created"})
-    return
-  }
-  res.status(200).json({message: "CategoryName Created Sucessfully", category})
+  res.status(201).json({message: "CategoryName Created Sucessfully", category})
 }
 
 export const getCategory = async (req:Request, res:Response):Promise<void> => {
   const category = await Category.findAll({
     include: [
       {
-        model: Category,
-        attributes: ["id", "categoryname"]
-      },
-      {
         model: Product,
         attributes: ["id", "productName"]
       }
     ]
   })
-  if(!category) {
+  // FIX: findAll() never returns null — it returns []
+  if(category.length === 0) {
 res.status(404).json({message: "Category Not Found"})
 return
   }
@@ -71,11 +64,14 @@ if(!category) {
   res.status(404).json({message: "Category not found"})
   return
 }
-const updateData = await category.update({
-  where: {
-    categoryName: categoryName
-  }
+ await category.update({
+    categoryName
 })
+ res.status(200).json({
+    message: "Category updated successfully",
+    category
+  })
+
 }
 export const deleteCategory = async(req:Request, res:Response):Promise<void> => {
   const {id} = req.params
