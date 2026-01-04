@@ -1,4 +1,6 @@
 import Category from "../../database/models/category.model.js"
+import { Request, Response } from "express"
+import Product from "../../database/models/product.model.js"
 
 const categoryData = [
   {
@@ -10,7 +12,7 @@ const categoryData = [
     categoryName: "Food/Beverage"
   }
 ]
-const seedCategory = async():Promise<void> => {
+export const seedCategory = async():Promise<void> => {
   
 const datas = await Category.findAll()
 if(datas.length === 0) {
@@ -21,8 +23,77 @@ console.log("Categories seeded successfully", datas);
 }
 
 }
-export default seedCategory
 
+export const addCategory = async(req:Request, res:Response):Promise<void> => {
+  const {categoryName} = req.body
+  if(!categoryName) {
+    res.status(400).json({message: "Please provide category Name!!"})
+    return
+  }
+  const category = await Category.create({
+    categoryName
+  })
+  if(!category) {
+    res.status(404).json({message: "Category Name not Created"})
+    return
+  }
+  res.status(200).json({message: "CategoryName Created Sucessfully", category})
+}
+
+export const getCategory = async (req:Request, res:Response):Promise<void> => {
+  const category = await Category.findAll({
+    include: [
+      {
+        model: Category,
+        attributes: ["id", "categoryname"]
+      },
+      {
+        model: Product,
+        attributes: ["id", "productName"]
+      }
+    ]
+  })
+  if(!category) {
+res.status(404).json({message: "Category Not Found"})
+return
+  }
+  res.status(200).json({message:"Fetched all the Category", category})
+}
+export const updateCategory = async(req:Request, res:Response):Promise<void> => {
+const {id} = req.params
+if(!id) {
+  res.status(400).json({message: "Category id not Found!!"})
+  return
+}
+const {categoryName} = req.body
+const category = await Category.findByPk(id)
+if(!category) {
+  res.status(404).json({message: "Category not found"})
+  return
+}
+const updateData = await category.update({
+  where: {
+    categoryName: categoryName
+  }
+})
+}
+export const deleteCategory = async(req:Request, res:Response):Promise<void> => {
+  const {id} = req.params
+  if(!id) {
+    res.status(400).json({message: "Category id not found!!"})
+    return
+  }
+  const deleteData = await Category.destroy({
+    where: {
+      id: id
+    }
+  })
+  if(deleteData === 0) {
+    res.status(404).json({message: "Category not Found!!"})
+    return
+  }
+  res.status(200).json({message: "category Deleted successful!!"})
+}
 //alternative count() instead of findall()
 /*
 import Category from "../../database/models/category.model.js";
