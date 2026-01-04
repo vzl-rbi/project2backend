@@ -128,7 +128,7 @@ export const deleteProduct = async(req:Request, res:Response):Promise<void> => {
   res.status(200).json({message: "Product Deleted Succesfully!!"})
   
 }
-export const  updateProduct = async(req: Request, res:Response):Promise<void> => {
+export const  updateProduct = async(req:Request, res:Response):Promise<void> => {
   const {id} = req.params
   if(!id) {
     res.status(400).json({message: "Product id is Required!!"})
