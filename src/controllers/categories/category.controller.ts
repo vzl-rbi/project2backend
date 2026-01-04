@@ -12,14 +12,16 @@ const categoryData = [
     categoryName: "Food/Beverage"
   }
 ]
-export const seedCategory = async():Promise<void> => {
+export const seedCategory = async(req:Request, res:Response):Promise<void> => {
   
 const datas = await Category.findAll()
 if(datas.length === 0) {
 await Category.bulkCreate(categoryData)
-console.log("Categories seeded successfully", datas);
+// console.log("Categories seeded successfully", datas);
+  res.status(201).json({ message: "Categories seeded successfully" })
 } else {
   console.log("Category Already seeded!!", datas)
+   res.status(200).json({ message: "Categories already seeded" })
 }
 
 }
@@ -68,7 +70,7 @@ if(!category) {
     categoryName
 })
  res.status(200).json({
-    message: "Category updated successfully",
+    message: "CategoryName updated successfully",
     category
   })
 
