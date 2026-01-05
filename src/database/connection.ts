@@ -3,6 +3,7 @@ import { envConfig } from "../config/config.js"
 import User from "./models/user.model.js"
 import Product from "./models/product.model.js";
 import Category from "./models/category.model.js";
+import Cart from "./models/cart.model.js";
 
 const sequelize = new Sequelize({
 dialect:"mysql",
@@ -11,7 +12,7 @@ host: envConfig.host,
   database: envConfig.database,
   username: envConfig.username,
   password: envConfig.password,
-  models: [User, Product, Category],
+  models: [User, Product, Category, Cart],
   logging: false //logging is not required. It’s a debug convenience switch.It only reduces console spam.
 })
 export const initDB = async () => {
@@ -31,12 +32,25 @@ export const initDB = async () => {
   })
  Category.hasMany(Product, {
   foreignKey: "categoryId",
-  onDelete: "SET NULL", // or CASCADE, depending on your logic
+  onDelete: "SET NULL", // or CASCADE, depending on logic
 });
 
 Product.belongsTo(Category, {
   foreignKey: "categoryId",
 });
+
+Product.hasMany(Cart, {
+  foreignKey: "productId"
+})
+Cart.belongsTo(Product, {
+  foreignKey:"productId"
+})
+User.hasMany(Cart, {
+  foreignKey: "userId"
+})
+Cart.belongsTo(User, {
+  foreignKey: 'userId'
+})
 //Or one to one relationship
 /*
 Product.belongsTo(Category, {
