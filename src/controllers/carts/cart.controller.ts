@@ -8,7 +8,7 @@ const addToCart = async (req: AuthRequest, res: Response): Promise<void> => {
   const { quantity, productId } = req.body;
 
   if (!userId) {
-    res.status(401).json({ message: "Unauthorized" });
+    res.status(401).json({ message: "Unauthorized User id" });
     return;
   }
 
