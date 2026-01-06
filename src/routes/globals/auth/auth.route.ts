@@ -4,7 +4,10 @@ import errorHandler from "../../../services/catchAsyncError.js"
 
 const authRouter = express.Router()
 
-authRouter.route("/register").post(errorHandler(registerUser))
-authRouter.route("/login").post(errorHandler(loginUser))
+authRouter.route("/register")
+.post(errorHandler(registerUser))
+
+authRouter.route("/login")
+.post(errorHandler(loginUser))
 
 export default authRouter

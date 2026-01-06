@@ -4,9 +4,15 @@ import { authMiddleware, restrictTo, Role } from "../../middleware/auth.middlewa
 import { storage, multer } from "../../middleware/multer.middlware.js"
 const upload = multer({storage:storage})
 const productRouter = express.Router()
-productRouter.route("/product").post(authMiddleware, restrictTo(Role.Admin),upload.single("image"), addProduct).get(getAllProduct)
 
-productRouter.route("/product/:id").get(getSingleProduct).delete(authMiddleware, restrictTo(Role.Admin), deleteProduct).patch(authMiddleware, restrictTo(Role.Admin), updateProduct)
+productRouter.route("/product")
+.post(authMiddleware, restrictTo(Role.Admin),upload.single("image"), addProduct)
+.get(getAllProduct)
+
+productRouter.route("/product/:id")
+.get(getSingleProduct)
+.delete(authMiddleware, restrictTo(Role.Admin), deleteProduct)
+.patch(authMiddleware, restrictTo(Role.Admin), updateProduct)
 
 
 export default productRouter

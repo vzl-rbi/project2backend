@@ -5,13 +5,13 @@ import { initDB } from "./database/connection.js";
 import productRouter from "./routes/products/product.route.js";
 // import seedCategory from "./controllers/categories/category.controller.js";
 import categoryRouter from "./routes/categories/category.route.js";
-import carRouter from "./routes/carts/cart.route.js";
+import cartRouter from "./routes/carts/cart.route.js";
 const app = express()
 app.use(express.json())
 app.use("/api", authRouter)
 app.use("/admin", productRouter)
 app.use("/category", categoryRouter)
-app.use("/cart", carRouter)
+app.use("/cart", cartRouter)
 // seedCategory()
 //adminSeeder
 const startApp = async () => {

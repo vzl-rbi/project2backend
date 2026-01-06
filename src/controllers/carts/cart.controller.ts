@@ -3,7 +3,7 @@ import { AuthRequest } from "../../middleware/auth.middleware.js";
 import Cart from "../../database/models/cart.model.js";
 import Product from "../../database/models/product.model.js";
 
-const addToCart = async (req: AuthRequest, res: Response): Promise<void> => {
+export const addToCart = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.user?.id;
   const { quantity, productId } = req.body;
 
@@ -51,4 +51,24 @@ const addToCart = async (req: AuthRequest, res: Response): Promise<void> => {
   }
 };
 
-export default addToCart;
+export const getMyCart = async(req:AuthRequest, res:Response):Promise<void> => {
+  const userId = req.user?.id
+  const cartItems = await Cart.findAll({
+    where: {
+      userId
+    },
+    include: [
+      {
+        model: Product,
+      }
+    ]
+  })
+  if(cartItems.length === 0) {
+    res.status(400).json({message: "No Items in the Carts!!"})
+  } else{
+    res.status(200).json({
+      message: "Cart Items Fetched Successfully!!",
+      data: cartItems    
+    })
+  }
+}
