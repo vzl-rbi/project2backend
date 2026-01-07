@@ -100,3 +100,53 @@ export const deleteMyCartItem = async(req:AuthRequest, res:Response):Promise<voi
     message: "Cart item deleted successfully"
   })
 }
+
+export const updateCartItems = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user?.id;
+    const { quantity } = req.body;
+
+    // 1. Auth check
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    // 2. Quantity validation
+    if (quantity === undefined || quantity <= 0) {
+      res.status(400).json({
+        message: "Quantity must be greater than 0",
+      });
+      return;
+    }
+
+    // 3. Find cart item
+    const cartItem = await Cart.findOne({
+      where: { userId, productId },
+    });
+
+    if (!cartItem) {
+      res.status(404).json({
+        message: "Cart item not found",
+      });
+      return;
+    }
+
+    // 4. Update quantity ONLY
+    await cartItem.update({ quantity });
+
+    res.status(200).json({
+      message: "Cart item updated successfully",
+      data: cartItem,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to update cart item",
+      err,
+    });
+  }
+};
