@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { AuthRequest } from "../../middleware/auth.middleware.js";
 import Cart from "../../database/models/cart.model.js";
 import Product from "../../database/models/product.model.js";
+import Category from "../../database/models/category.model.js";
 
 export const addToCart = async (req: AuthRequest, res: Response): Promise<void> => {
   const userId = req.user?.id;
@@ -59,7 +60,13 @@ export const getMyCart = async(req:AuthRequest, res:Response):Promise<void> => {
     },
     include: [
       {
-        model: Product,
+        model: Product, //cart bhitra Product join
+        include: [
+          {
+            model: Category,  //product bhitra category join gareko
+            attributes: ["id", "categoryName"]
+          }
+        ]
       }
     ]
   })
@@ -71,4 +78,25 @@ export const getMyCart = async(req:AuthRequest, res:Response):Promise<void> => {
       data: cartItems    
     })
   }
+}
+export const deleteMyCartItem = async(req:AuthRequest, res:Response):Promise<void> => {
+  const userId = req.user?.id
+  const {productId} = req.params
+  //check whethe the product id exits or not
+  const product = await Product.findByPk(productId)
+  if(!product) {
+    res.status(404).json({
+      message: "product not found with that id"
+    })
+  }
+  //cart items product delete
+  await Cart.destroy({
+    where: {
+      userId,
+      productId
+    }
+  })
+  res.status(200).json({
+    message: "Cart item deleted successfully"
+  })
 }

@@ -4,7 +4,7 @@ import { authMiddleware } from "../../middleware/auth.middleware.js"
 
 const cartRouter = express.Router()
 
-cartRouter.route("/")
+cartRouter.route("/cart/")
 .post(authMiddleware,addToCart)
 .get(authMiddleware, getMyCart)
 export default cartRouter

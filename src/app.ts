@@ -11,7 +11,7 @@ app.use(express.json())
 app.use("/api", authRouter)
 app.use("/admin", productRouter)
 app.use("/category", categoryRouter)
-app.use("/cart", cartRouter)
+app.use("/customer", cartRouter)
 // seedCategory()
 //adminSeeder
 const startApp = async () => {
