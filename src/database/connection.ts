@@ -25,7 +25,7 @@ export const initDB = async () => {
   // User.hasMany(Product)
   // Product.belongsTo(User)
   //yati matra garda ni bhayo ani  UserId Column banai dinxa Product Table tira but alternative afnai column name din amna lage
-
+//user-product relationship
   User.hasMany(Product, {
     foreignKey: "userId",
     onDelete: "CASCADE"// delete products if user deleted
@@ -33,6 +33,7 @@ export const initDB = async () => {
   Product.belongsTo(User, {
     foreignKey: "userId"
   })
+  //category-product relationship
  Category.hasMany(Product, {
   foreignKey: "categoryId",
   onDelete: "SET NULL", // or CASCADE, depending on logic
@@ -41,13 +42,14 @@ export const initDB = async () => {
 Product.belongsTo(Category, {
   foreignKey: "categoryId",
 });
-
+//product-cart relationship
 Product.hasMany(Cart, {
   foreignKey: "productId"
 })
 Cart.belongsTo(Product, {
   foreignKey:"productId"
 })
+//user- cart relationship
 User.hasMany(Cart, {
   foreignKey: "userId"
 })
@@ -63,8 +65,30 @@ Category.hasOne(Product,{
 foreignKey: "categoryId"
 })
 */
-
-
+//order-orderDetail relationship
+Order.hasMany(OrderDetail, {
+  foreignKey: "orderId",
+  onDelete:"CASCADE"
+})
+OrderDetail.belongsTo(Order, {
+  foreignKey:"orderId"
+})
+//orderDetail - product relationship
+Product.hasMany(OrderDetail, {
+  foreignKey: "productId",
+  onDelete:"CASCADE"
+})
+OrderDetail.belongsTo(Product,{
+  foreignKey: "productId"
+})
+//order-payment relationship
+Payment.hasOne(Order, {
+  foreignKey: "paymentId",
+  onDelete: "CASCADE"
+})
+Order.belongsTo(Payment, {
+  foreignKey: "paymentId"
+})
   //Aunthenticate
     await sequelize.authenticate();
     console.log("Database authentication successful");

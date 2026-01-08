@@ -43,5 +43,7 @@
 
     // "moduleDetection": "force",
     "skipLibCheck": true,
-  }
+  },
+  // "include": ["src/**/*"], // Added: Compile only src folder
+  // "exclude": ["node_modules", "dist"] // Added: Ignore these
 }

@@ -414,3 +414,10 @@ const userData = [
 // Insert all records at once
 const users = await User.bulkCreate(userData);
 console.log(`Created ${users.length} users`);
+
+## removing this easy Model Name of table from conncetin.ts
+
+`models: [User, Product, Category, Cart, Order, OrderDetail, Payment]`
+
+to use this shortcut alternative
+models: [`${__dirname}/models/**/*.model.js`], // Adjust the glob if your file pattern or directory differs

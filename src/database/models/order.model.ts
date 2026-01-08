@@ -13,24 +13,29 @@ class Order extends Model {
     defaultValue: DataType.UUIDV4,
   })
   declare id: string
+
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.STRING,
     allowNull: false
   })
-  declare phoneNumber: number
+  declare phoneNumber: String
+
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
   declare shippingAddress: string
+
+
   @Column({
     type: DataType.DECIMAL(10, 2),
     allowNull: false
   })
   declare totalAmount: number
+  
   @Column({
     type: DataType.ENUM("pending","cancelled", "delivered", "ontheway", "preparation"),
-    defaultValue: "pending"
+    defaultValue: "pending",
     allowNull: false
   })
   declare orderStatus: string
