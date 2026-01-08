@@ -4,6 +4,9 @@ import User from "./models/user.model.js"
 import Product from "./models/product.model.js";
 import Category from "./models/category.model.js";
 import Cart from "./models/cart.model.js";
+import Order from "./models/order.model.js";
+import OrderDetail from "./models/orderDetail.model.js";
+import Payment from "./models/payement.model.js";
 
 const sequelize = new Sequelize({
 dialect:"mysql",
@@ -12,7 +15,7 @@ host: envConfig.host,
   database: envConfig.database,
   username: envConfig.username,
   password: envConfig.password,
-  models: [User, Product, Category, Cart],
+  models: [User, Product, Category, Cart, Order, OrderDetail, Payment],
   logging: false //logging is not required. It’s a debug convenience switch.It only reduces console spam.
 })
 export const initDB = async () => {

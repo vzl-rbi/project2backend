@@ -1,0 +1,38 @@
+import { Table, Column, DataType, Model } from "sequelize-typescript";
+
+@Table({
+  tableName:"orders",
+  modelName: "Order",
+  timestamps: true
+})
+
+class Order extends Model {
+  @Column({
+    primaryKey: true,
+    type: DataType.UUID,
+    defaultValue: DataType.UUIDV4,
+  })
+  declare id: string
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false
+  })
+  declare phoneNumber: number
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  declare shippingAddress: string
+  @Column({
+    type: DataType.DECIMAL(10, 2),
+    allowNull: false
+  })
+  declare totalAmount: number
+  @Column({
+    type: DataType.ENUM("pending","cancelled", "delivered", "ontheway", "preparation"),
+    defaultValue: "pending"
+    allowNull: false
+  })
+  declare orderStatus: string
+}
+export default Order
