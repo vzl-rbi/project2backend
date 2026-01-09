@@ -424,3 +424,123 @@ models: [`${__dirname}/models/**/*.model.js`], // Adjust the glob if your file p
 
 array ma length check garni and object ma yasto garda bhayo
 `(!paymentDetails.paymentMethod || items.length === 0)`
+
+## createOrder gpt code
+
+import { Response } from "express";
+import { AuthRequest } from "../../middleware/auth.middleware.js";
+import Order from "../../database/models/order.model.js";
+import Payment from "../../database/models/payement.model.js";
+import OrderDetail from "../../database/models/orderDetail.model.js";
+import { orderData, PaymentMethod } from "../../types/order.types.js";
+import sequelize from "../../database/config/sequelize.js";
+
+export const createOrder = async (
+req: AuthRequest,
+res: Response
+): Promise<void> => {
+const transaction = await sequelize.transaction();
+
+try {
+const userId = req.user?.id;
+if (!userId) {
+res.status(401).json({ message: "Unauthorized" });
+return;
+}
+
+    const {
+      phoneNumber,
+      shippingAddress,
+      totalAmount,
+      paymentDetails,
+      items,
+    }: orderData = req.body;
+
+    if (
+      !phoneNumber ||
+      !shippingAddress ||
+      totalAmount == null ||
+      !paymentDetails?.paymentMethod ||
+      !Array.isArray(items) ||
+      items.length === 0
+    ) {
+      res.status(400).json({
+        message: "Invalid order data",
+      });
+      return;
+    }
+
+    const order = await Order.create(
+      {
+        phoneNumber,
+        shippingAddress,
+        totalAmount,
+        userId,
+      },
+      { transaction }
+    );
+
+    await Payment.create(
+      {
+        paymentMethod: paymentDetails.paymentMethod,
+        orderId: order.id,
+        userId,
+      },
+      { transaction }
+    );
+
+    const orderDetails = items.map((item) => {
+      if (!item.productId || !item.quantity || item.quantity <= 0) {
+        throw new Error("Invalid order item");
+      }
+
+      return {
+        orderId: order.id,
+        productId: item.productId,
+        quantity: item.quantity,
+      };
+    });
+
+    await OrderDetail.bulkCreate(orderDetails, { transaction });
+
+    await transaction.commit();
+
+    if (paymentDetails.paymentMethod === PaymentMethod.Khalti) {
+      // khalti integration here
+    }
+
+    res.status(201).json({
+      message: "Order placed successfully",
+      orderId: order.id,
+    });
+
+} catch (error) {
+await transaction.rollback();
+
+    res.status(500).json({
+      message: "Failed to create order",
+      error: error instanceof Error ? error.message : error,
+    });
+
+}
+};
+
+# Key improvements you should learn from
+
+Transactions protect your data integrity
+
+Bulk create > loop + await
+
+Validate everything from client
+
+Always link related tables
+
+Correct HTTP status codes matter
+
+If you keep writing APIs without transactions and error handling, you’ll keep creating silent bugs that ruin databases. Fix the habit now
+
+## Khalti Integration( for testing sandbox)
+
+# Axios installed
+
+`npm install axios`
