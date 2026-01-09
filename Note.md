@@ -421,3 +421,6 @@ console.log(`Created ${users.length} users`);
 
 to use this shortcut alternative
 models: [`${__dirname}/models/**/*.model.js`], // Adjust the glob if your file pattern or directory differs
+
+array ma length check garni and object ma yasto garda bhayo
+`(!paymentDetails.paymentMethod || items.length === 0)`

@@ -89,6 +89,14 @@ Payment.hasOne(Order, {
 Order.belongsTo(Payment, {
   foreignKey: "paymentId"
 })
+//order-user relation
+User.hasMany(Order, {
+  foreignKey: "userId",
+  onDelete: "CASCADE"
+})
+Order.belongsTo(User, {
+  foreignKey: "userId"
+})
   //Aunthenticate
     await sequelize.authenticate();
     console.log("Database authentication successful");
