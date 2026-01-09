@@ -6,12 +6,14 @@ import productRouter from "./routes/products/product.route.js";
 // import seedCategory from "./controllers/categories/category.controller.js";
 import categoryRouter from "./routes/categories/category.route.js";
 import cartRouter from "./routes/carts/cart.route.js";
+import orderRouter from "./routes/orders/order.route.js";
 const app = express()
 app.use(express.json())
 app.use("/api", authRouter)
 app.use("/admin", productRouter)
 app.use("/category", categoryRouter)
 app.use("/customer", cartRouter)
+app.use("/customer", orderRouter)
 // seedCategory()
 //adminSeeder
 const startApp = async () => {
