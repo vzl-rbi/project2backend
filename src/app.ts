@@ -9,13 +9,25 @@ import cartRouter from "./routes/carts/cart.route.js";
 import orderRouter from "./routes/orders/order.route.js";
 const app = express()
 app.use(express.json())
+app.use(express.json());
+
+app.use((req, _res, next) => {
+  console.log("AFTER JSON PARSER:", req.body);
+  next();
+});
+
 app.use("/api", authRouter)
 app.use("/admin", productRouter)
 app.use("/category", categoryRouter)
 app.use("/customer", cartRouter)
-app.use("/customer", orderRouter)
+app.use("/apis", orderRouter)
 // seedCategory()
 //adminSeeder
+app.use((req, _res, next) => {
+  console.log("RAW HEADERS:", req.headers["content-type"]);
+  next();
+});
+
 const startApp = async () => {
   await initDB();        // Ensure DB is ready
   await adminSeeder();   // Run seeder only after DB is ready

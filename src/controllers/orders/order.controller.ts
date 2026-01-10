@@ -2,12 +2,13 @@ import { Response } from "express";
 import { AuthRequest } from "../../middleware/auth.middleware.js";
 import Order from "../../database/models/order.model.js";
 import { orderData, PaymentMethod } from "../../types/order.types.js";
-import Payment from "../../database/models/payement.model.js";
 import OrderDetail from "../../database/models/orderDetail.model.js";
 import axios from "axios";
+import Payment from "../../database/models/payement.model.js";
 
-export const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
+const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
+    console.log("BODY:", req.body);
+
     const userId = req.user?.id;
 
     if (!userId) {
@@ -15,14 +16,13 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    const { phoneNumber, shippingAddress, totalAmount, paymentDetails, items } = req.body as orderData;
+    const { phoneNumber, shippingAddress, totalAmount, paymentDetails, items }: orderData = req.body;
 
     if (
       !phoneNumber ||
       !shippingAddress ||
-      typeof totalAmount !== "number" ||
-      !paymentDetails?.paymentMethod ||
-      !Array.isArray(items) ||
+      !totalAmount ||
+      !paymentDetails.paymentMethod ||
       items.length === 0
     ) {
       res.status(400).json({
@@ -39,17 +39,15 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
     });
 
     await Payment.create({
-      paymentDetails: paymentDetails.paymentMethod,
-      orderId: order.id, // minimal but important
+      paymentMethod: paymentDetails.paymentMethod,
+      orderId: order.id, // Assuming association exists (e.g., belongsTo Order)
     });
 
     for (let i = 0; i < items.length; i++) {
-      const item = items[i];
-      if (!item) continue;
       await OrderDetail.create({
-        quantity: item.quantity,
-        productId: item.productId,
-        orderId: order.id,
+        quantity: items[i]?.quantity,
+        productId: items[i]?.productId,
+        orderId: order.id
       });
     }
 
@@ -63,7 +61,7 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
       };
 
       const khaltiResponse = await axios.post(
-        "https://a.khalti.com/api/v2/epayment/initiate/",
+        "https://dev.khalti.com/api/v2/epayment/initiate",
         data,
         {
           headers: {
@@ -80,8 +78,6 @@ export const createOrder = async (req: AuthRequest, res: Response): Promise<void
     }
 
     res.status(201).json({ message: "Order placed successfully" });
-  } catch (error) {
-    console.error("Create order error:", error);
-    res.status(500).json({ message: "Internal server error" });
-  }
 };
+
+export default createOrder;
