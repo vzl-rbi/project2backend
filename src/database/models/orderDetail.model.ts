@@ -14,11 +14,6 @@ class OrderDetail extends Model {
   })
   declare id: string
   @Column({
-    type: DataType.STRING,
-    allowNull: false
-  })
-  declare phoneNumber: String
-  @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })

@@ -6,7 +6,7 @@ import Category from "./models/category.model.js";
 import Cart from "./models/cart.model.js";
 import Order from "./models/order.model.js";
 import OrderDetail from "./models/orderDetail.model.js";
-import Payment from "./models/payement.model.js";
+import Payment from "./models/payment.model.js";
 
 const sequelize = new Sequelize({
 dialect:"mysql",
@@ -82,13 +82,15 @@ OrderDetail.belongsTo(Product,{
   foreignKey: "productId"
 })
 //order-payment relationship
-Payment.hasOne(Order, {
-  foreignKey: "paymentId",
+Order.hasOne(Payment, {
+  foreignKey: "orderId",
   onDelete: "CASCADE"
-})
-Order.belongsTo(Payment, {
-  foreignKey: "paymentId"
-})
+});
+
+Payment.belongsTo(Order, {
+  foreignKey: "orderId"
+});
+
 //order-user relation
 User.hasMany(Order, {
   foreignKey: "userId",
@@ -101,7 +103,7 @@ Order.belongsTo(User, {
     await sequelize.authenticate();
     console.log("Database authentication successful");
 // migration garna ko lagi "mysql2"
-    await sequelize.sync({ force: false });
+    await sequelize.sync({ force: false});
     console.log("Database synced successfully");
   } catch (err) {
     console.error("Database initialization failed:", err);

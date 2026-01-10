@@ -18,7 +18,7 @@ class Order extends Model {
     type: DataType.STRING,
     allowNull: false
   })
-  declare phoneNumber: String
+  declare phoneNumber: string
 
   @Column({
     type: DataType.STRING,

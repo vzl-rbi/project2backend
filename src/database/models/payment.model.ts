@@ -14,6 +14,11 @@ class Payment extends Model {
   })
   declare id: string
   @Column({
+  type: DataType.UUID,
+  allowNull: false
+})
+declare orderId: string;
+  @Column({
     type: DataType.ENUM("cod", "khalti","esewa"),
     allowNull: false
   })

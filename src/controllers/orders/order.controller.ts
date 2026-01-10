@@ -4,7 +4,7 @@ import Order from "../../database/models/order.model.js";
 import { orderData, PaymentMethod } from "../../types/order.types.js";
 import OrderDetail from "../../database/models/orderDetail.model.js";
 import axios from "axios";
-import Payment from "../../database/models/payement.model.js";
+import Payment from "../../database/models/payment.model.js";
 
 const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
     console.log("BODY:", req.body);
