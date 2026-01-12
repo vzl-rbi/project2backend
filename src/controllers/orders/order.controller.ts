@@ -59,37 +59,33 @@ const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
       */
 
     if (paymentDetails.paymentMethod === PaymentMethod.Khalti) {
-      const response = await axios.post(
-        "https://dev.khalti.com/api/v2/epayment/initiate",
-        {
-          return_url: "http://localhost:4000/api/payment/khalti/success",
-          website_url: "http://localhost:4000",
-          purchase_order_id: order.id,
-          purchase_order_name: `order-${order.id}`,
-          amount: totalAmount * 100,
-        },
-        {
-          headers: {
-            Authorization: `key ${process.env.KHALTI_SECRET_KEY}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(response)
-      const khaltiRes: KhaltiResponse = response.data
-
-      await payment.update(
-        { pidx: khaltiRes.pidx },
-      );
-      res.status(200).json({
-        paymentUrl: khaltiRes.payment_url,
-      });
-      return;
+  const response = await axios.post(
+    "https://a.khalti.com/api/v2/epayment/initiate/",
+    {
+      return_url: "http://localhost:5173/khalti/success",
+      website_url: "http://localhost:5173",
+      purchase_order_id: order.id,
+      purchase_order_name: `order-${order.id}`,
+      amount: totalAmount * 100,
+    },
+    {
+      headers: {
+        Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`,
+        "Content-Type": "application/json",
+      },
     }
-    res.status(201).json({ message: "Order placed successfully" });
+  );
 
+  const khaltiRes: KhaltiResponse = response.data;
+
+  await payment.update({ pidx: khaltiRes.pidx });
+
+  res.status(200).json({
+    message: "Order placed successfully",
+    paymentUrl: khaltiRes.payment_url,
+  });
+}
   } catch (err: any) {
-    console.error("ORDER ERROR:", err.response?.data || err.message);
     res.status(500).json({
       message: "Order creation failed",
       error: err.response?.data || err.message,
