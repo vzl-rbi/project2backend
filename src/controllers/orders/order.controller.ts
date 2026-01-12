@@ -1,11 +1,11 @@
 import { Response } from "express";
 import { AuthRequest } from "../../middleware/auth.middleware.js";
 import Order from "../../database/models/order.model.js";
-import { KhaltiResponse, orderData, PaymentMethod } from "../../types/order.types.js";
+import { KhaltiResponse, orderData, PaymentMethod, TransactionStatus, TransactionVerifyResponse } from "../../types/order.types.js";
 import OrderDetail from "../../database/models/orderDetail.model.js";
 import axios from "axios";
 import Payment from "../../database/models/payment.model.js";
-const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
+export const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
    console.log("BODY:", req.body);
   try {
     const userId = req.user?.id;
@@ -92,8 +92,71 @@ const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
     });
   }
 };
+export const verifyPayment = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const { pidx } = req.body;
+    if (!pidx) {
+      res.status(400).json({ message: "Please provide pidx" });
+      return;
+    }
 
-export default createOrder;
+    // 1️⃣ Find payment record
+    const payment = await Payment.findOne({
+      where: { pidx },
+      include: [{ model: Order }]
+    });
 
+    if (!payment) {
+      res.status(404).json({ message: "Invalid payment reference" });
+      return;
+    }
 
+    // 2️⃣ Prevent double verification
+    if (payment.paymentStatus === TransactionStatus.Completed) {
+      res.status(200).json({
+        message: "Payment already verified",
+        data: payment
+      });
+      return;
+    }
 
+    // 3️⃣ Verify with Khalti
+    const response = await axios.post(
+      "https://a.khalti.com/api/v2/epayment/lookup/",
+      { pidx },
+      {
+        headers: {
+          Authorization: `Key ${process.env.KHALTI_SECRET_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    );
+console.log(response)
+    const khaltiData: TransactionVerifyResponse = response.data;
+
+    // 4️⃣ Check status
+    if (khaltiData.status !== TransactionStatus.Completed) {
+      res.status(400).json({
+        message: "Payment not completed",
+        status: khaltiData.status,
+      });
+      return;
+    }
+    // 6️⃣ Mark payment & order as PAID
+    await payment.update({
+      paymentStatus: TransactionStatus.Completed,
+    });
+    res.status(200).json({
+      message: "Payment verified successfully",
+      data: payment
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Payment verification failed",
+      error: error,
+    });
+  }
+};
