@@ -147,7 +147,7 @@ console.log(response)
     }
     // 6️⃣ Mark payment & order as PAID
     await payment.update({
-      paymentStatus: TransactionStatus.Completed,
+      paymentStatus: "paid",
     });
     res.status(200).json({
       message: "Payment verified successfully",

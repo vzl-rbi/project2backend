@@ -544,3 +544,5 @@ If you keep writing APIs without transactions and error handling, you’ll keep 
 # Axios installed
 
 `npm install axios`
+
+## khalti integration coded, verified too.
