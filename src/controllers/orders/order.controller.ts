@@ -202,6 +202,7 @@ res.status(200).json({
   
 }
 }
+//Customer side starts from here
 export const fetchOrderDetail = async(req:AuthRequest, res:Response):Promise<void> => {
 const userId = req.user?.id
 if(!userId){
@@ -283,3 +284,4 @@ export const cancelMyOrder = async (
     });
   }
 };
+//Customer Side End
