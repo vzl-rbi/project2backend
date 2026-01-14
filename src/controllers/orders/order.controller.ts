@@ -1,7 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../../middleware/auth.middleware.js";
 import Order from "../../database/models/order.model.js";
-import { KhaltiResponse, orderData, PaymentMethod, TransactionStatus, TransactionVerifyResponse } from "../../types/order.types.js";
+import { KhaltiResponse, orderData, OrderStatus, PaymentMethod, TransactionStatus, TransactionVerifyResponse } from "../../types/order.types.js";
 import OrderDetail from "../../database/models/orderDetail.model.js";
 import axios from "axios";
 import Payment from "../../database/models/payment.model.js";
@@ -232,3 +232,54 @@ res.status(200).json({
   data: orderDetails
 })
 }
+export const cancelMyOrder = async (
+  req: AuthRequest,
+  res: Response
+): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    const orderId = req.params.id;
+
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    const order = await Order.findOne({
+      where: {
+        id: orderId,
+        userId,
+      },
+    });
+
+    if (!order) {
+      res.status(404).json({
+        message: "Order not found",
+      });
+      return;
+    }
+
+    if (
+      order.orderStatus === OrderStatus.Ontheway ||
+      order.orderStatus === OrderStatus.Preparation
+    ) {
+      res.status(400).json({
+        message: "Order cannot be cancelled at this stage",
+      });
+      return;
+    }
+
+    await order.update({
+      orderStatus: OrderStatus.Cancelled,
+    });
+
+    res.status(200).json({
+      message: "Order cancelled successfully",
+    });
+  } catch (error) {
+    console.error("Cancel order error:", error);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};

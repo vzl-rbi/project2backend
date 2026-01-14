@@ -44,3 +44,9 @@ export enum TransactionStatus {
   Initiated = "Initiated",
   Refunded = "Refunded"
 }
+export enum OrderStatus {
+  Cancelled = "cancelled",
+  Delivered = "delivered",
+  Ontheway = "ontheway",
+  Preparation = "preparation"
+}
