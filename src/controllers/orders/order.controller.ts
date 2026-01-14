@@ -5,6 +5,8 @@ import { KhaltiResponse, orderData, PaymentMethod, TransactionStatus, Transactio
 import OrderDetail from "../../database/models/orderDetail.model.js";
 import axios from "axios";
 import Payment from "../../database/models/payment.model.js";
+import { error } from "node:console";
+import Product from "../../database/models/product.model.js";
 export const createOrder = async (req: AuthRequest, res: Response): Promise<void> => {
    console.log("BODY:", req.body);
   try {
@@ -160,3 +162,73 @@ console.log(response)
     });
   }
 };
+export const fetchMyOrder = async(req:AuthRequest, res:Response):Promise<void> => {
+try {
+  const userId = req.user?.id
+if(!userId){
+  res.status(401).json({
+    message: "Unauthorized userId"
+  })
+  return
+}
+const orders = await Order.findAll({
+  where: {
+    userId
+  },
+  include: [
+    {
+
+      model: Payment
+    }
+  ]
+})
+if(orders.length === 0) {
+  res.status(404).json({
+    message: "Order fetched failed!!",
+    data: []
+  }) 
+  return
+}
+res.status(200).json({
+  message: "order fetched Successfully!!",
+  data: orders
+})
+} catch (err) {
+  console.error("Fetch order error:", error);
+  res.status(500).json({
+    message: "Internal Server Error",
+    error: err
+  })
+  
+}
+}
+export const fetchOrderDetail = async(req:AuthRequest, res:Response):Promise<void> => {
+const userId = req.user?.id
+if(!userId){
+  res.status(401).json({
+    message: "Unauthorized userId"
+  })
+  return
+}
+const orderId = req.params.id
+const orderDetails = await OrderDetail.findAll({
+  where: {
+    orderId
+  },
+  include: [
+    {
+      model: Product
+    }
+  ]
+})
+if(orderDetails.length === 0) {
+  res.status(404).json({
+    message: "Order Details fetched Failed!!"
+  })
+  return
+}
+res.status(200).json({
+  message: "Order Details fetched Successfuly!!",
+  data: orderDetails
+})
+}
