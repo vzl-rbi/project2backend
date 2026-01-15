@@ -11,10 +11,10 @@ const app = express()
 app.use(express.json())
 app.use(express.json());
 
-app.use((req, _res, next) => {
-  console.log("AFTER JSON PARSER:", req.body);
-  next();
-});
+// app.use((req, _res, next) => {
+//   console.log("AFTER JSON PARSER:", req.body);
+//   next();
+// });
 
 app.use("/api", authRouter)
 app.use("/admin", productRouter)
@@ -23,10 +23,10 @@ app.use("/customer", cartRouter)
 app.use("/apis", orderRouter)
 // seedCategory()
 //adminSeeder
-app.use((req, _res, next) => {
-  console.log("RAW HEADERS:", req.headers["content-type"]);
-  next();
-});
+// app.use((req, _res, next) => {
+//   console.log("RAW HEADERS:", req.headers["content-type"]);
+//   next();
+// });
 
 const startApp = async () => {
   await initDB();        // Ensure DB is ready
