@@ -546,3 +546,110 @@ If you keep writing APIs without transactions and error handling, you’ll keep 
 `npm install axios`
 
 ## khalti integration coded, verified too.
+
+Here’s a **short, future-you friendly note** explaining what this file does and how the flow works 👇
+(Think of it as a mental map, not line-by-line details.)
+
+---
+
+## 📦 Order & Payment Controller – Quick Notes
+
+### 1️⃣ `createOrder`
+
+**Purpose:** Create an order, save items, and initiate payment.
+
+**Flow:**
+
+- Check authenticated user (`userId`)
+- Validate order data (phone, address, amount, items, payment method)
+- Create:
+  - `Order`
+  - `Payment` (linked to order)
+  - `OrderDetail` (for each product item)
+
+- If payment method is **Khalti**:
+  - Call Khalti **initiate API**
+  - Save `pidx` in Payment table
+  - Return Khalti `payment_url` to frontend
+
+👉 Result: Order is created, payment is initialized but **not verified yet**
+
+---
+
+### 2️⃣ `verifyPayment`
+
+**Purpose:** Verify Khalti payment after user completes payment.
+
+**Flow:**
+
+- Receive `pidx` from frontend
+- Find payment + related order
+- Prevent duplicate verification
+- Call Khalti **lookup API**
+- If status = `Completed`:
+  - Update payment status to `paid`
+
+- Return verified payment data
+
+👉 Result: Payment is confirmed and marked as **PAID**
+
+---
+
+### 3️⃣ `fetchMyOrder`
+
+**Purpose:** Fetch all orders of logged-in user.
+
+**Flow:**
+
+- Get `userId`
+- Find all orders where `userId`
+- Include payment info
+- Return orders list
+
+👉 Used for **My Orders** page
+
+---
+
+### 4️⃣ `fetchOrderDetail`
+
+**Purpose:** Get products of a specific order (customer side).
+
+**Flow:**
+
+- Get `orderId` from params
+- Find `OrderDetail` records
+- Include `Product` info
+- Return item list
+
+👉 Used for **Order Details page**
+
+---
+
+### 5️⃣ `cancelMyOrder`
+
+**Purpose:** Allow user to cancel an order.
+
+**Rules:**
+
+- User must own the order
+- Order **cannot be cancelled** if:
+  - `Preparation`
+  - `OnTheWay`
+
+- If allowed:
+  - Update order status → `Cancelled`
+
+👉 Used before order is processed/shipped
+
+---
+
+## 🧠 Overall Architecture
+
+- **Order** → main order info
+- **OrderDetail** → products in order
+- **Payment** → payment tracking (Khalti)
+- **Khalti APIs**:
+  - `initiate` → start payment
+  - `lookup` → verify payment
+
+---
