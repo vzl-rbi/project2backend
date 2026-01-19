@@ -322,3 +322,48 @@ export const changeOrderStatus = async(req:AuthRequest, res:Response):Promise<vo
   })
 
 }
+export const deleteorder = async(req:AuthRequest, res:Response):Promise<void> => {
+  const userId = req.user?.id
+   if(!userId) {
+    res.status(401).json({
+      message: "Unauthorized userId"
+    })
+    return
+  }
+  const orderId = req.params.id
+  if (!orderId) {
+      res.status(400).json({ message: "Order ID is required" });
+      return;
+    }
+  const order = await Order.findOne({
+      where: { id: orderId },
+      include: [{ model: Payment }] // Optional: to check payment status if needed
+    });
+
+    if (!order) {
+      res.status(404).json({ message: "Order not found" });
+      return;
+    }
+    // Optional: Prevent deletion of certain orders
+    // e.g., don't delete if already delivered or on the way
+    // if (order.orderStatus === OrderStatus.Delivered || order.orderStatus === OrderStatus.Ontheway) {
+    //   res.status(400).json({ message: "Cannot delete order at this stage" });
+    //   return;
+    // }
+
+    // Optional: If not admin, check ownership
+    // if (order.userId !== userId) {
+    //   res.status(403).json({ message: "You are not authorized to delete this order" });
+    //   return;
+    // }
+
+    // Delete the order
+    // Because of onDelete: 'CASCADE' in associations:
+    // - OrderDetails (orderId FK) will be deleted automatically
+    // - Payment (orderId FK) will be deleted automatically
+  await order.destroy()
+  res.status(200).json({
+    message: "Order Deleted Successfully!!"
+  })
+
+}
