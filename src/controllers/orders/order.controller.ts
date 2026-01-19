@@ -285,3 +285,40 @@ export const cancelMyOrder = async (
   }
 };
 //Customer Side End
+//Admin side start here
+export const changeOrderStatus = async(req:AuthRequest, res:Response):Promise<void> => {
+  const userId = req.user?.id
+  if(!userId) {
+    res.status(401).json({
+      message: "Unauthorized userId"
+    })
+    return
+  }
+  const orderId = req.params.id
+  const orderStatus:OrderStatus = req.body.orderStatus
+  if(!orderId || ! orderStatus) {
+    res.status(400).json({
+      message: "Order Id and new Order Status required!!"
+    })
+    return
+  }
+  const order = await Order.findOne({
+    where :{
+      id: userId
+    },
+      include : [{
+        model: Payment
+      }
+      ]
+  })
+  if(!order) {
+    res.status(400).json({ message: "Order not found" });
+      return;
+  }
+  await order.update({orderStatus})
+  res.status(200).json({
+    message: "OrderStatus Updated Successfully!!",
+    data:order
+  })
+
+}
