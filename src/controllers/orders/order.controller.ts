@@ -322,7 +322,7 @@ export const changeOrderStatus = async(req:AuthRequest, res:Response):Promise<vo
   })
 
 }
-export const deleteorder = async(req:AuthRequest, res:Response):Promise<void> => {
+export const deleteOrder = async(req:AuthRequest, res:Response):Promise<void> => {
   const userId = req.user?.id
    if(!userId) {
     res.status(401).json({
@@ -362,8 +362,55 @@ export const deleteorder = async(req:AuthRequest, res:Response):Promise<void> =>
     // - OrderDetails (orderId FK) will be deleted automatically
     // - Payment (orderId FK) will be deleted automatically
   await order.destroy()
+  //connection.ts database relationship
+ // Order.hasMany(OrderDetail, { onDelete: 'CASCADE' })
+// Order.hasOne(Payment, { onDelete: 'CASCADE' })
+// So deleting the order will clean up related data automatically — that's perfect for maintaining data integrity.
   res.status(200).json({
     message: "Order Deleted Successfully!!"
   })
-
 }
+export const fetchAllOrders = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const userId = req.user?.id;
+    if (!userId) {
+      res.status(401).json({ message: "Unauthorized" });
+      return;
+    }
+
+    // Assuming middleware (restrictTo(Role.Admin)) already checks role, but optional double-check
+    // if (req.user.role !== Role.Admin) {
+    //   res.status(403).json({ message: "Forbidden: Admin access required" });
+    //   return;
+    // }
+
+    const orders = await Order.findAll({
+      include: [
+        {
+          model: Payment,
+        },
+        // Optional: Include more for admin view (e.g., User for customer details, OrderDetail for items)
+        // {
+        //   model: User,
+        //   attributes: ['id', 'name', 'email'], // Exclude sensitive fields like password
+        // },
+        // {
+        //   model: OrderDetail,
+        //   include: [{ model: Product }],
+        // }
+      ],
+      order: [['createdAt', 'DESC']], // Optional: Sort by newest first
+    });
+
+    res.status(200).json({
+      message: "All orders fetched successfully",
+      data: orders,
+    });
+  } catch (err: any) {
+    console.error("Fetch all orders error:", err);
+    res.status(500).json({
+      message: "Internal server error",
+      error: err.message,
+    });
+  }
+};
