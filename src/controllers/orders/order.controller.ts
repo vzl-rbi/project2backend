@@ -371,10 +371,9 @@ export const deleteOrder = async(req:AuthRequest, res:Response):Promise<void> =>
   })
 }
 export const fetchAllOrders = async (req: AuthRequest, res: Response): Promise<void> => {
-  try {
     const userId = req.user?.id;
     if (!userId) {
-      res.status(401).json({ message: "Unauthorized" });
+      res.status(401).json({ message: "Unauthorized usetrId" });
       return;
     }
 
@@ -406,11 +405,4 @@ export const fetchAllOrders = async (req: AuthRequest, res: Response): Promise<v
       message: "All orders fetched successfully",
       data: orders,
     });
-  } catch (err: any) {
-    console.error("Fetch all orders error:", err);
-    res.status(500).json({
-      message: "Internal server error",
-      error: err.message,
-    });
-  }
 };
