@@ -304,7 +304,7 @@ export const changeOrderStatus = async(req:AuthRequest, res:Response):Promise<vo
   }
   const order = await Order.findOne({
     where :{
-      id: userId
+      id: orderId
     },
       include : [{
         model: Payment
