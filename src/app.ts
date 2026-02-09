@@ -7,6 +7,7 @@ import productRouter from "./routes/products/product.route.js";
 import categoryRouter from "./routes/categories/category.route.js";
 import cartRouter from "./routes/carts/cart.route.js";
 import orderRouter from "./routes/orders/order.route.js";
+import cors from "cors"
 const app = express()
 app.use(express.json())
 app.use(express.json());
@@ -15,7 +16,14 @@ app.use(express.json());
 //   console.log("AFTER JSON PARSER:", req.body);
 //   next();
 // });
-
+// Enable CORS for all routes
+app.use(cors());
+app.use(
+  cors({
+    origin: "*", //// Allow only my React app oR http://localhost:5173 " or "*""
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+  }),
+);
 app.use("/api", authRouter)
 app.use("/admin", productRouter)
 app.use("/category", categoryRouter)
