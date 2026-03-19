@@ -41,7 +41,10 @@ export const addToCart = async (req: AuthRequest, res: Response): Promise<void> 
       cartItem.quantity += quantity
       await cartItem.save()
       */
-      res.status(200).json({ message: "Cart updated", cartItem });
+      res.status(200).json({ message: "Cart updated", data: {
+        cartItem,
+        product
+      } });
     } else {
       const newItem = await Cart.create({ userId, productId, quantity });
       res.status(201).json({ message: "Item added to cart", cartItem: newItem });
