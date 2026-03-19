@@ -653,3 +653,9 @@ Here’s a **short, future-you friendly note** explaining what this file does an
   - `lookup` → verify payment
 
 ---
+
+## CORS
+
+`npm install cors`
+`npm i -D @types/cors`
+to solve cors error during entering data from front end and worked
