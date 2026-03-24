@@ -42,7 +42,7 @@ export const addToCart = async (req: AuthRequest, res: Response): Promise<void> 
       await cartItem.save()
       */
       res.status(200).json({ message: "Cart updated", data: {
-        cartItem,
+        ...cartItem.toJSON(), //cartItem.toJSON() returns a plain object containing the cart item’s data, which is then merged with the product field using the spread operator
         product
       } });
     } else {

@@ -659,3 +659,7 @@ Here’s a **short, future-you friendly note** explaining what this file does an
 `npm install cors`
 `npm i -D @types/cors`
 to solve cors error during entering data from front end and worked
+
+## cart Controller
+
+In the code snippet, cartItem.toJSON() returns a plain object containing the cart item’s data, which is then merged with the product field using the spread operator. This results in a final object that can be reliably sent as JSON without exposing any ODM-specific metadata.
