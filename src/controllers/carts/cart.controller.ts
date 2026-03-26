@@ -41,10 +41,16 @@ export const addToCart = async (req: AuthRequest, res: Response): Promise<void> 
       cartItem.quantity += quantity
       await cartItem.save()
       */
-      res.status(200).json({ message: "Cart updated", data: {
-        ...cartItem.toJSON(), //cartItem.toJSON() returns a plain object containing the cart item’s data, which is then merged with the product field using the spread operator
-        product
-      } });
+     const data = await Cart.findAll({
+      where : {
+        userId
+      }
+     })
+     res.status(200).json({message: "Cart updated", data})
+      // res.status(200).json({ message: "Cart updated", data: {
+      //   ...cartItem.toJSON(), //cartItem.toJSON() returns a plain object containing the cart item’s data, which is then merged with the product field using the spread operator
+      //   product
+      // } });
     } else {
       const newItem = await Cart.create({ userId, productId, quantity });
       res.status(201).json({ message: "Item added to cart", cartItem: newItem });
