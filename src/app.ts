@@ -10,8 +10,6 @@ import orderRouter from "./routes/orders/order.route.js";
 import cors from "cors"
 const app = express()
 app.use(express.json())
-app.use(express.json());
-
 // app.use((req, _res, next) => {
 //   console.log("AFTER JSON PARSER:", req.body);
 //   next();
